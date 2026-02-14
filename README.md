@@ -54,8 +54,8 @@ tree.InitFromArray(sortedKeys);
 
 ## Performance
 
-All operations have O(log n) time complexity due to the perfectly balanced tree structure.
+All search operations have O(log n) time complexity due to the perfectly balanced tree structure.
 
 ## License
 
-[Add your chosen license here]
+Public Domain
