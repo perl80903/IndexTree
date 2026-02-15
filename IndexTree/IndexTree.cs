@@ -183,24 +183,6 @@ namespace IndexTree
             size--;
         }
 
-        private static K GetHighestKey(IndexTreeNode subtree)
-        {
-            while (subtree.Right != null)
-            {
-                subtree = subtree.Right;
-            }
-            return subtree.Key;
-        }
-
-        private static K GetLowestKey(IndexTreeNode subtree)
-        {
-            while (subtree.Left != null)
-            {
-                subtree = subtree.Left;
-            }
-            return subtree.Key;
-        }
-
         private IndexTreeNode? DeleteKey(IndexTreeNode root, int nodesInSubtree, K key)
         {
             int nodesInLeftChild = (nodesInSubtree - 1) / 2;
@@ -286,169 +268,6 @@ namespace IndexTree
             }
 
             return root;
-        }
-
-        private void ShiftKeysToTheLeftAndInsert(IndexTreeNode node, K keyToInsert)
-        {
-            IndexTreeNode? prev = null;
-            IndexTreeNode? curr = node;
-
-            while (curr != null)
-            {
-                walkingStack.Push(curr);
-                curr = curr.Left;
-            }
-
-            while (walkingStack.Count > 0)
-            {
-                curr = walkingStack.Pop();
-
-                if (prev != null)
-                {
-                    var cmp = keyToInsert.CompareTo(curr.Key);
-                    if (cmp == 0)
-                        ThrowDuplicateKeyError(keyToInsert);
-
-                    if (cmp > 0)
-                    {
-                        prev.Key = curr.Key;
-                    }
-                    else
-                    {
-                        prev.Key = keyToInsert;
-                        walkingStack.Clear();
-                        return;
-                    }
-                }
-
-                prev = curr;
-
-                var right = curr.Right;
-                if (right != null)
-                {
-                    curr = right;
-                    while (curr != null)
-                    {
-                        walkingStack.Push(curr);
-                        curr = curr.Left;
-                    }
-                }
-            }
-
-            walkingStack.Clear();
-            prev!.Key = keyToInsert;
-        }
-
-        private void ShiftKeysToTheRightAndInsert(IndexTreeNode node, K keyToInsert)
-        {
-            IndexTreeNode? prev = null;
-            IndexTreeNode? curr = node;
-
-            while (curr != null)
-            {
-                walkingStack.Push(curr);
-                curr = curr.Right;
-            }
-
-            while (walkingStack.Count > 0)
-            {
-                curr = walkingStack.Pop();
-
-                if (prev != null)
-                {
-                    var cmp = keyToInsert.CompareTo(curr.Key);
-                    if (cmp == 0)
-                        ThrowDuplicateKeyError(keyToInsert);
-
-                    if (cmp < 0)
-                    {
-                        prev.Key = curr.Key;
-                    }
-                    else
-                    {
-                        prev.Key = keyToInsert;
-                        walkingStack.Clear();
-                        return;
-                    }
-                }
-
-                prev = curr;
-
-                var left = curr.Left;
-                if (left != null)
-                {
-                    curr = left;
-                    while (curr != null)
-                    {
-                        walkingStack.Push(curr);
-                        curr = curr.Right;
-                    }
-                }
-            }
-
-            walkingStack.Clear();
-            prev!.Key = keyToInsert;
-        }
-
-
-        private IndexTreeNode? ShiftKeysGreaterThanToTheLeft(IndexTreeNode node, K key)
-        {
-            IndexTreeNode? curr = node;
-            IndexTreeNode? match = null;
-            while (walkingStack.Count > 0 || curr != null)
-            {
-                while (curr != null)
-                {
-                    walkingStack.Push(curr);
-                    if (curr.Key.CompareTo(key) < 0)
-                        break;
-                    curr = curr.Left;
-                }
-                curr = walkingStack.Pop();
-                if (match != null)
-                {
-                    match.Key = curr.Key;
-                    match = curr;
-                }
-                else
-                {
-                    if (curr.Key.Equals(key))
-                        match = curr;
-                }
-                curr = curr.Right;
-            }
-            walkingStack.Clear();
-            return match;
-        }
-
-        private IndexTreeNode? ShiftKeysSmallerThanToTheRight(IndexTreeNode node, K key)
-        {
-            IndexTreeNode? curr = node;
-            IndexTreeNode? match = null;
-            while (walkingStack.Count > 0 || curr != null)
-            {
-                while (curr != null)
-                {
-                    walkingStack.Push(curr);
-                    if (curr.Key.CompareTo(key) > 0)
-                        break;
-                    curr = curr.Right;
-                }
-                curr = walkingStack.Pop();
-                if (match != null)
-                {
-                    match.Key = curr.Key;
-                    match = curr;
-                }
-                else
-                {
-                    if (curr.Key.Equals(key))
-                        match = curr;
-                }
-                curr = curr.Left;
-            }
-            walkingStack.Clear();
-            return match;
         }
 
         private IndexTreeNode? InsertKey(IndexTreeNode? root, int nodesInSubtree, K key)
@@ -611,7 +430,6 @@ namespace IndexTree
                         return -1;
                     node = node.Right;
                     leftSkip += nodesInLeftSubtree + 1;
-                    //nodesInSubtree = nodesInLeftSubtree + 1 - nodesInSubtree % 2;
                     nodesInSubtree -= nodesInLeftSubtree + 1;
                 }
             } while (true);
@@ -662,6 +480,186 @@ namespace IndexTree
                 }
             }
             return result;
+        }
+
+        private void ShiftKeysToTheLeftAndInsert(IndexTreeNode node, K keyToInsert)
+        {
+            IndexTreeNode? prev = null;
+            IndexTreeNode? curr = node;
+
+            while (curr != null)
+            {
+                walkingStack.Push(curr);
+                curr = curr.Left;
+            }
+
+            while (walkingStack.Count > 0)
+            {
+                curr = walkingStack.Pop();
+
+                if (prev != null)
+                {
+                    var cmp = keyToInsert.CompareTo(curr.Key);
+                    if (cmp == 0)
+                        ThrowDuplicateKeyError(keyToInsert);
+
+                    if (cmp > 0)
+                    {
+                        prev.Key = curr.Key;
+                    }
+                    else
+                    {
+                        prev.Key = keyToInsert;
+                        walkingStack.Clear();
+                        return;
+                    }
+                }
+
+                prev = curr;
+
+                var right = curr.Right;
+                if (right != null)
+                {
+                    curr = right;
+                    while (curr != null)
+                    {
+                        walkingStack.Push(curr);
+                        curr = curr.Left;
+                    }
+                }
+            }
+
+            walkingStack.Clear();
+            prev!.Key = keyToInsert;
+        }
+
+        private void ShiftKeysToTheRightAndInsert(IndexTreeNode node, K keyToInsert)
+        {
+            IndexTreeNode? prev = null;
+            IndexTreeNode? curr = node;
+
+            while (curr != null)
+            {
+                walkingStack.Push(curr);
+                curr = curr.Right;
+            }
+
+            while (walkingStack.Count > 0)
+            {
+                curr = walkingStack.Pop();
+
+                if (prev != null)
+                {
+                    var cmp = keyToInsert.CompareTo(curr.Key);
+                    if (cmp == 0)
+                        ThrowDuplicateKeyError(keyToInsert);
+
+                    if (cmp < 0)
+                    {
+                        prev.Key = curr.Key;
+                    }
+                    else
+                    {
+                        prev.Key = keyToInsert;
+                        walkingStack.Clear();
+                        return;
+                    }
+                }
+
+                prev = curr;
+
+                var left = curr.Left;
+                if (left != null)
+                {
+                    curr = left;
+                    while (curr != null)
+                    {
+                        walkingStack.Push(curr);
+                        curr = curr.Right;
+                    }
+                }
+            }
+
+            walkingStack.Clear();
+            prev!.Key = keyToInsert;
+        }
+
+        private IndexTreeNode? ShiftKeysGreaterThanToTheLeft(IndexTreeNode node, K key)
+        {
+            IndexTreeNode? curr = node;
+            IndexTreeNode? match = null;
+            while (walkingStack.Count > 0 || curr != null)
+            {
+                while (curr != null)
+                {
+                    walkingStack.Push(curr);
+                    if (curr.Key.CompareTo(key) < 0)
+                        break;
+                    curr = curr.Left;
+                }
+                curr = walkingStack.Pop();
+                if (match != null)
+                {
+                    match.Key = curr.Key;
+                    match = curr;
+                }
+                else
+                {
+                    if (curr.Key.Equals(key))
+                        match = curr;
+                }
+                curr = curr.Right;
+            }
+            walkingStack.Clear();
+            return match;
+        }
+
+        private IndexTreeNode? ShiftKeysSmallerThanToTheRight(IndexTreeNode node, K key)
+        {
+            IndexTreeNode? curr = node;
+            IndexTreeNode? match = null;
+            while (walkingStack.Count > 0 || curr != null)
+            {
+                while (curr != null)
+                {
+                    walkingStack.Push(curr);
+                    if (curr.Key.CompareTo(key) > 0)
+                        break;
+                    curr = curr.Right;
+                }
+                curr = walkingStack.Pop();
+                if (match != null)
+                {
+                    match.Key = curr.Key;
+                    match = curr;
+                }
+                else
+                {
+                    if (curr.Key.Equals(key))
+                        match = curr;
+                }
+                curr = curr.Left;
+            }
+            walkingStack.Clear();
+            return match;
+        }
+
+        private static K GetHighestKey(IndexTreeNode subtree)
+        {
+            while (subtree.Right != null)
+            {
+                subtree = subtree.Right;
+            }
+            return subtree.Key;
+        }
+
+        private static K GetLowestKey(IndexTreeNode subtree)
+        {
+            while (subtree.Left != null)
+            {
+                subtree = subtree.Left;
+            }
+            return subtree.Key;
         }
 
         [DoesNotReturn]

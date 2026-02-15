@@ -1,6 +1,6 @@
 # IndexTree
 
-A high-performance index tree implementation based on a perfectly balanced binary search tree in C#.
+A compact, well-performing, index tree implementation based on a balanced binary search tree in C#.
 
 ## Overview
 
@@ -8,6 +8,8 @@ IndexTree provides an indexed container that combines the benefits of:
 - Fast O(log n) search operations (AddKey, RemoveKey, ContainsKey)
 - Index-based access (GetKeyAtIndex, GetIndexOfKey)
 - Perfect balance guarantee - the tree depth is always O(log n)
+- Recursion-free implementation for better performance and reduced stack usage
+- Memory efficient design with minimal overhead per node (no balance information stored)
 
 ## Features
 
