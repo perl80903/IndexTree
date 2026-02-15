@@ -5,10 +5,9 @@ A compact, well-performing, index tree implementation based on a balanced binary
 ## Overview
 
 IndexTree provides an indexed container that combines the benefits of:
-- Fast O(log n) search operations (AddKey, RemoveKey, ContainsKey)
+- Fast O(log n) search operations
 - Index-based access (GetKeyAtIndex, GetIndexOfKey)
-- Perfect balance guarantee - the tree depth is always O(log n)
-- Recursion-free implementation for better performance and reduced stack usage
+- Very limited use of recursion for better performance and reduced stack usage
 - Memory efficient design with minimal overhead per node (no balance information stored)
 
 ## Features
